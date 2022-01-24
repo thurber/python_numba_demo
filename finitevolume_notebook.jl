@@ -7,11 +7,19 @@ using InteractiveUtils
 # ╔═╡ ffc9bd66-aee5-46d0-b9a6-d6baa8ec0370
 begin
 	using Plots
+	include("KelvinHelmholtzInstability.jl")
+	using .KelvinHelmholtzInstability
 end
 
 
+# ╔═╡ 0049afa1-4c21-458c-8556-19f8c5502671
+md"""
+### Naive implementation
+This implementation relies on matrix math using Julia's elementwise syntax, without trying to be optimal.
+"""
+
 # ╔═╡ 6f155d6e-7975-11ec-19a2-c160ca84a5e5
-function simulate(resolution=128)
+function naive_simulate(resolution=128)
 	
 	# constants
 	N       = resolution
@@ -142,15 +150,21 @@ function simulate(resolution=128)
 		t = t + timestep()
 	end
 
-	return ρ
+	heatmap(ρ)
 
 end
 
 # ╔═╡ 0dfbd3e5-bc60-4455-9640-8c91d71f2118
-ρ = simulate(128);
+naive_simulate(256)
 
 # ╔═╡ 8731151d-1158-4f55-87c1-da98144cdd75
-heatmap(ρ)
+md"""
+### Elementwise threaded implementation
+This implementation tries to discretize each operation within threaded loops, to force parallelization. It works almost as fast as the Numba optimized Python implementation.
+"""
+
+# ╔═╡ 53fe825b-e4bd-41c2-be95-8f2d28a9c631
+KelvinHelmholtzInstability.simulate(256)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -197,9 +211,9 @@ version = "1.16.1+1"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "6e39c91fb4b84dcb870813c91674bdebb9145895"
+git-tree-sha1 = "54fc4400de6e5c3e27be6047da2ef6ba355511f8"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.11.5"
+version = "1.11.6"
 
 [[deps.ChangesOfVariables]]
 deps = ["ChainRulesCore", "LinearAlgebra", "Test"]
@@ -646,9 +660,9 @@ version = "2.0.1"
 
 [[deps.PlotUtils]]
 deps = ["ColorSchemes", "Colors", "Dates", "Printf", "Random", "Reexport", "Statistics"]
-git-tree-sha1 = "68604313ed59f0408313228ba09e79252e4b2da8"
+git-tree-sha1 = "6f1b25e8ea06279b5689263cc538f51331d7ca17"
 uuid = "995b91a9-d308-5afd-9ec6-746e21dbc043"
-version = "1.1.2"
+version = "1.1.3"
 
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "GeometryBasics", "JSON", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "PlotThemes", "PlotUtils", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "Unzip"]
@@ -745,9 +759,9 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
-git-tree-sha1 = "2ae4fe21e97cd13efd857462c1869b73c9f61be3"
+git-tree-sha1 = "2884859916598f974858ff01df7dfc6c708dd895"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.3.2"
+version = "1.3.3"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -1001,9 +1015,9 @@ version = "1.6.38+0"
 
 [[deps.libvorbis_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Ogg_jll", "Pkg"]
-git-tree-sha1 = "c45f4e40e7aafe9d086379e5578947ec8b95a8fb"
+git-tree-sha1 = "b910cb81ef3fe6e78bf6acee440bda86fd6ae00c"
 uuid = "f27f6e37-5d2b-51aa-960f-b287f2bc3b7a"
-version = "1.3.7+0"
+version = "1.3.7+1"
 
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1034,8 +1048,10 @@ version = "0.9.1+5"
 
 # ╔═╡ Cell order:
 # ╠═ffc9bd66-aee5-46d0-b9a6-d6baa8ec0370
+# ╟─0049afa1-4c21-458c-8556-19f8c5502671
 # ╠═6f155d6e-7975-11ec-19a2-c160ca84a5e5
 # ╠═0dfbd3e5-bc60-4455-9640-8c91d71f2118
-# ╠═8731151d-1158-4f55-87c1-da98144cdd75
+# ╟─8731151d-1158-4f55-87c1-da98144cdd75
+# ╠═53fe825b-e4bd-41c2-be95-8f2d28a9c631
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
